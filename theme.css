@@ -64,6 +64,7 @@ body {
   --radius-l: 8px;
   --input-radius: 6px;
   --tab-radius: 8px;
+  --list-indent: 2em;
   --checkbox-radius: 4px;
   --bold-weight: 500;
   --h1-size: 28px;
@@ -598,18 +599,21 @@ select:focus {
   margin: 0 0 8px;
 }
 
-.markdown-rendered ol {
-  padding: 0 4px 0 8px;
-}
-
+.markdown-rendered ol,
 .markdown-rendered ul {
-  padding: 0 0 8px;
+  padding: 0 0 0 8px;
 }
 
 .markdown-rendered ol > li,
 .markdown-rendered ul > li {
   margin: 0;
   padding-left: 22px;
+}
+
+.markdown-rendered li > ul,
+.markdown-rendered li > ol {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .markdown-rendered ol > li::marker,
@@ -644,27 +648,74 @@ select:focus {
 .markdown-rendered ul {
   list-style-type: disc;
 }
-.markdown-rendered ul > li > ul {
+.markdown-rendered ul ul {
   list-style-type: circle;
 }
-.markdown-rendered ul > li > ul > li > ul {
+.markdown-rendered ul ul ul {
   list-style-type: square;
 }
 /* Level 4+ cycles back */
-.markdown-rendered ul > li > ul > li > ul > li > ul {
+.markdown-rendered ul ul ul ul {
   list-style-type: disc;
 }
-.markdown-rendered ul > li > ul > li > ul > li > ul > li > ul {
+.markdown-rendered ul ul ul ul ul {
   list-style-type: circle;
 }
-.markdown-rendered ul > li > ul > li > ul > li > ul > li > ul > li > ul {
+.markdown-rendered ul ul ul ul ul ul {
   list-style-type: square;
 }
 
-/* Ordered List Marker Color (Live Preview) */
-.markdown-source-view.mod-cm6 .cm-formatting-list-ol {
+/* ========================================= */
+/* Live Preview WYSIWYG Lists (OL & UL)      */
+/* ========================================= */
+
+/* 1. Ordered List Counters Initialization */
+.markdown-source-view.mod-cm6 .cm-line:not(.HyperMD-list-line) { counter-reset: wiz-ol-1 wiz-ol-2 wiz-ol-3 wiz-ol-4 wiz-ol-5 wiz-ol-6; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-1 { counter-reset: wiz-ol-2 wiz-ol-3 wiz-ol-4 wiz-ol-5 wiz-ol-6; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-2 { counter-reset: wiz-ol-3 wiz-ol-4 wiz-ol-5 wiz-ol-6; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-3 { counter-reset: wiz-ol-4 wiz-ol-5 wiz-ol-6; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-4 { counter-reset: wiz-ol-5 wiz-ol-6; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-5 { counter-reset: wiz-ol-6; }
+
+/* 2. Decoupled Counter Increments (Prevent Sequence Jumping during edits) */
+.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ol { counter-increment: wiz-ol-1; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ol { counter-increment: wiz-ol-2; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ol { counter-increment: wiz-ol-3; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-4 .cm-formatting-list-ol { counter-increment: wiz-ol-4; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-5 .cm-formatting-list-ol { counter-increment: wiz-ol-5; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-6 .cm-formatting-list-ol { counter-increment: wiz-ol-6; }
+
+/* 3. Hide Native Raw Markdown Markers dynamically (only when not active typing) */
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ol,
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ul {
+  font-size: 0;
+  letter-spacing: -1em;
+  color: transparent !important;
+}
+
+/* Shared ::after base for all custom list markers */
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ol::after,
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ul::after {
+  font-size: var(--font-text-size, 15px);
+  letter-spacing: normal;
   color: var(--wiz-list-marker-color);
 }
+
+/* 4. Ordered List Custom Markers (1. → a. → i. → 1. …) */
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-1 .cm-formatting-list-ol::after { content: counter(wiz-ol-1, decimal) ". "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-2 .cm-formatting-list-ol::after { content: counter(wiz-ol-2, lower-alpha) ". "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-3 .cm-formatting-list-ol::after { content: counter(wiz-ol-3, lower-roman) ". "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-4 .cm-formatting-list-ol::after { content: counter(wiz-ol-4, decimal) ". "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-5 .cm-formatting-list-ol::after { content: counter(wiz-ol-5, lower-alpha) ". "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-6 .cm-formatting-list-ol::after { content: counter(wiz-ol-6, lower-roman) ". "; }
+
+/* 5. Unordered List Custom Markers (• → ◦ → ▪ → • …) */
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-1 .cm-formatting-list-ul::after { content: "• "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-2 .cm-formatting-list-ul::after { content: "◦ "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-3 .cm-formatting-list-ul::after { content: "▪ "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-4 .cm-formatting-list-ul::after { content: "• "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-5 .cm-formatting-list-ul::after { content: "◦ "; }
+.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-6 .cm-formatting-list-ul::after { content: "▪ "; }
 
 .markdown-rendered table {
   border-collapse: collapse;
