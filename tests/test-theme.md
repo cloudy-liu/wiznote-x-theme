@@ -15,6 +15,10 @@ tags:
 
 ## Heading Scale
 
+# Heading Level 1
+
+## Heading Level 2
+
 ### Heading Level 3
 
 #### Heading Level 4
@@ -29,6 +33,29 @@ tags:
 也可以测试混排文本，例如中文、English, numbers `12345`, email `hello@example.com`, and a short path `theme.css`。
 
 ## Lists
+
+- Unordered item A
+- Unordered item B
+  - Nested unordered item B.1
+  - Nested unordered item B.2
+    - Third-level unordered item B.2.1
+    - Third-level unordered item B.2.2
+      - Fourth-level unordered item
+- Unordered item C
+
+1. Ordered item 1
+2. Ordered item 2
+   1. Nested ordered item a
+   2. Nested ordered item b
+      1. Third-level ordered item i
+      2. Third-level ordered item ii
+         1. Fourth-level ordered item 1
+         2. Fourth-level ordered item 2
+3. Ordered item 3
+
+- [ ] Pending task item
+- [x] Completed task item
+- [ ] Follow-up task item
 
 - 无序列表项 A
 - 无序列表项 B
@@ -105,6 +132,49 @@ python -m unittest discover -s tests -v
 ```
 
 ## Table
+
+| Column | Content | Notes |
+|------|------|------|
+| Text | Plain text | Verify border, spacing, and row rhythm |
+| Code | `inline code` | Verify inline code styling inside cells |
+| Link | [Example](https://example.com) | Verify link color and underline styling |
+
+## Rich HTML Table
+
+<table>
+  <thead>
+    <tr>
+      <th>Lists</th>
+      <th>Ordered</th>
+      <th>Code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <ul>
+          <li>Cell bullet one</li>
+          <li>Cell bullet two</li>
+        </ul>
+      </td>
+      <td>
+        <ol>
+          <li>Cell ordered one</li>
+          <li>Cell ordered two</li>
+        </ol>
+      </td>
+      <td><code>inline code in a cell</code></td>
+    </tr>
+    <tr>
+      <td><p>Paragraph text inside a rich table cell.</p></td>
+      <td>
+        <pre><code>cell code block
+with two lines</code></pre>
+      </td>
+      <td><a href="https://example.com/table">Cell link</a></td>
+    </tr>
+  </tbody>
+</table>
 
 | 列名 | 内容 | 备注 |
 |------|------|------|

@@ -64,6 +64,21 @@ def collect_missing_items() -> list[str]:
         ".cm-link",
         "#448aff",
         "#07142a",
+        ".markdown-rendered h1",
+        ".markdown-rendered h6",
+        ".inline-title",
+        ".markdown-source-view.mod-cm6 .cm-line.HyperMD-header-1",
+        ".markdown-source-view.mod-cm6 .cm-line.HyperMD-header-6",
+        ".markdown-source-view.mod-cm6 .cm-header-1",
+        ".markdown-source-view.mod-cm6 .cm-header-6",
+        ".markdown-rendered ol > li::before",
+        ".markdown-rendered ul > li::before",
+        ".markdown-rendered li > ul",
+        ".markdown-rendered li.task-list-item",
+        ".markdown-rendered li.task-list-item > input[type=\"checkbox\"]",
+        ".markdown-rendered table td > ul",
+        ".markdown-rendered table td > ol",
+        ".markdown-rendered table td > pre",
     ]
     for marker in required_css_markers:
         if marker not in css:
