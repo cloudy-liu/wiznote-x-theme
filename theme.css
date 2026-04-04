@@ -447,13 +447,13 @@ select:focus {
 .markdown-reading-view .markdown-preview-sizer,
 .is-readable-line-width .markdown-source-view.mod-cm6 .cm-sizer,
 .is-readable-line-width .markdown-source-view.mod-cm6 .cm-contentContainer {
-  max-width: calc(var(--wiz-editor-column-width) + 48px);
+  max-width: calc(var(--wiz-editor-column-width) + 64px);
   width: 100%;
 }
 
 .markdown-reading-view .markdown-preview-sizer {
   margin: 0 auto;
-  padding: 0 32px 32px 48px;
+  padding: 0 32px 32px 32px;
 }
 
 .is-readable-line-width .markdown-source-view.mod-cm6 .cm-contentContainer,
@@ -597,17 +597,15 @@ select:focus {
 .markdown-rendered ul,
 .markdown-rendered ol {
   margin: 0 0 8px;
-}
-
-.markdown-rendered ol,
-.markdown-rendered ul {
-  padding: 0 0 0 8px;
+  padding: 0;
+  list-style: none;
 }
 
 .markdown-rendered ol > li,
 .markdown-rendered ul > li {
   margin: 0;
   padding-left: 22px;
+  position: relative;
 }
 
 .markdown-rendered li > ul,
@@ -616,53 +614,44 @@ select:focus {
   margin-bottom: 0;
 }
 
-.markdown-rendered ol > li::marker,
-.markdown-rendered ul > li::marker {
+/* ========================================= */
+/* Reading View Lists – WizNote ::before     */
+/* ========================================= */
+
+/* Shared marker base */
+.markdown-rendered ol > li::before,
+.markdown-rendered ul > li::before {
   color: var(--wiz-list-marker-color);
+  display: inline-block;
+  font-size: 15px;
+  margin-left: -22px;
+  min-width: 22px;
+  text-align: left;
 }
 
-/* Ordered List Nested Styling (Reading View)
- * WizNote cycle: decimal → lower-alpha → lower-roman → decimal … */
-.markdown-rendered ol {
-  list-style-type: decimal;
-}
-.markdown-rendered ol ol {
-  list-style-type: lower-alpha;
-}
-.markdown-rendered ol ol ol {
-  list-style-type: lower-roman;
-}
-/* Level 4+ cycles back */
-.markdown-rendered ol ol ol ol {
-  list-style-type: decimal;
-}
-.markdown-rendered ol ol ol ol ol {
-  list-style-type: lower-alpha;
-}
-.markdown-rendered ol ol ol ol ol ol {
-  list-style-type: lower-roman;
-}
+/* OL counters reset & increment */
+.markdown-rendered ol { counter-reset: wiz-r-ol; }
+.markdown-rendered ol > li { counter-increment: wiz-r-ol; }
 
-/* Unordered List Nested Styling (Reading View)
- * WizNote cycle: disc (•) → circle (◦) → square (▪) → disc … */
-.markdown-rendered ul {
-  list-style-type: disc;
-}
-.markdown-rendered ul ul {
-  list-style-type: circle;
-}
-.markdown-rendered ul ul ul {
-  list-style-type: square;
-}
-/* Level 4+ cycles back */
-.markdown-rendered ul ul ul ul {
-  list-style-type: disc;
-}
-.markdown-rendered ul ul ul ul ul {
-  list-style-type: circle;
-}
-.markdown-rendered ul ul ul ul ul ul {
-  list-style-type: square;
+/* OL nested marker cycle: decimal → lower-alpha → lower-roman → … */
+.markdown-rendered ol > li::before                                     { content: counter(wiz-r-ol, decimal) "."; }
+.markdown-rendered ol ol > li::before                                  { content: counter(wiz-r-ol, lower-alpha) "."; }
+.markdown-rendered ol ol ol > li::before                               { content: counter(wiz-r-ol, lower-roman) "."; }
+.markdown-rendered ol ol ol ol > li::before                            { content: counter(wiz-r-ol, decimal) "."; }
+.markdown-rendered ol ol ol ol ol > li::before                         { content: counter(wiz-r-ol, lower-alpha) "."; }
+.markdown-rendered ol ol ol ol ol ol > li::before                      { content: counter(wiz-r-ol, lower-roman) "."; }
+
+/* UL nested marker cycle: disc → circle → square → … */
+.markdown-rendered ul > li::before           { content: "•"; }
+.markdown-rendered ul ul > li::before        { content: "◦"; }
+.markdown-rendered ul ul ul > li::before     { content: "▪"; }
+.markdown-rendered ul ul ul ul > li::before  { content: "•"; }
+.markdown-rendered ul ul ul ul ul > li::before   { content: "◦"; }
+.markdown-rendered ul ul ul ul ul ul > li::before { content: "▪"; }
+
+/* Task list items should NOT get bullet markers */
+.markdown-rendered .task-list-item::before {
+  content: none;
 }
 
 /* ========================================= */
@@ -685,37 +674,37 @@ select:focus {
 .markdown-source-view.mod-cm6 .HyperMD-list-line-5 .cm-formatting-list-ol { counter-increment: wiz-ol-5; }
 .markdown-source-view.mod-cm6 .HyperMD-list-line-6 .cm-formatting-list-ol { counter-increment: wiz-ol-6; }
 
-/* 3. Hide Native Raw Markdown Markers dynamically (only when not active typing) */
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ol,
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ul {
+/* 3. Hide Native Raw Markdown Markers (all lines including active) */
+.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol,
+.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul {
   font-size: 0;
   letter-spacing: -1em;
   color: transparent !important;
 }
 
 /* Shared ::after base for all custom list markers */
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ol::after,
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line .cm-formatting-list-ul::after {
+.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol::after,
+.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul::after {
   font-size: var(--font-text-size, 15px);
   letter-spacing: normal;
   color: var(--wiz-list-marker-color);
 }
 
 /* 4. Ordered List Custom Markers (1. → a. → i. → 1. …) */
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-1 .cm-formatting-list-ol::after { content: counter(wiz-ol-1, decimal) ". "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-2 .cm-formatting-list-ol::after { content: counter(wiz-ol-2, lower-alpha) ". "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-3 .cm-formatting-list-ol::after { content: counter(wiz-ol-3, lower-roman) ". "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-4 .cm-formatting-list-ol::after { content: counter(wiz-ol-4, decimal) ". "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-5 .cm-formatting-list-ol::after { content: counter(wiz-ol-5, lower-alpha) ". "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-6 .cm-formatting-list-ol::after { content: counter(wiz-ol-6, lower-roman) ". "; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ol::after { content: counter(wiz-ol-1, decimal) "."; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ol::after { content: counter(wiz-ol-2, lower-alpha) "."; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ol::after { content: counter(wiz-ol-3, lower-roman) "."; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-4 .cm-formatting-list-ol::after { content: counter(wiz-ol-4, decimal) "."; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-5 .cm-formatting-list-ol::after { content: counter(wiz-ol-5, lower-alpha) "."; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-6 .cm-formatting-list-ol::after { content: counter(wiz-ol-6, lower-roman) "."; }
 
 /* 5. Unordered List Custom Markers (• → ◦ → ▪ → • …) */
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-1 .cm-formatting-list-ul::after { content: "• "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-2 .cm-formatting-list-ul::after { content: "◦ "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-3 .cm-formatting-list-ul::after { content: "▪ "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-4 .cm-formatting-list-ul::after { content: "• "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-5 .cm-formatting-list-ul::after { content: "◦ "; }
-.markdown-source-view.mod-cm6 .cm-line:not(.cm-active).HyperMD-list-line-6 .cm-formatting-list-ul::after { content: "▪ "; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ul::after { content: "•"; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ul::after { content: "◦"; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ul::after { content: "▪"; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-4 .cm-formatting-list-ul::after { content: "•"; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-5 .cm-formatting-list-ul::after { content: "◦"; }
+.markdown-source-view.mod-cm6 .HyperMD-list-line-6 .cm-formatting-list-ul::after { content: "▪"; }
 
 .markdown-rendered table {
   border-collapse: collapse;
@@ -943,7 +932,7 @@ input[type="checkbox"]:checked {
   .markdown-reading-view .markdown-preview-sizer,
   .is-readable-line-width .markdown-source-view.mod-cm6 .cm-sizer,
   .is-readable-line-width .markdown-source-view.mod-cm6 .cm-contentContainer {
-    max-width: min(calc(var(--wiz-editor-column-width) + 48px), 100%);
+    max-width: min(calc(var(--wiz-editor-column-width) + 64px), 100%);
   }
 }
 
