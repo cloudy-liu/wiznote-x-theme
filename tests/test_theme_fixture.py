@@ -37,6 +37,23 @@ class ThemeFixtureTest(unittest.TestCase):
         missing = [marker for marker in required_markers if marker not in fixture]
         self.assertEqual(missing, [], "\n".join(missing))
 
+    def test_fixture_covers_heading_scoped_tasks_and_nested_rich_cells(self) -> None:
+        fixture = read_text(THEME_FIXTURE_PATH)
+
+        required_markers = [
+            "### Heading Followed By Tasks",
+            "- [ ] Heading-scoped pending task",
+            "- [x] Heading-scoped completed task",
+            "  - [ ] Nested heading-scoped follow-up",
+            "<td>",
+            "<ul>",
+            "<li>Nested cell bullet</li>",
+            "<pre><code>nested cell code",
+        ]
+
+        missing = [marker for marker in required_markers if marker not in fixture]
+        self.assertEqual(missing, [], "\n".join(missing))
+
 
 if __name__ == "__main__":
     unittest.main()

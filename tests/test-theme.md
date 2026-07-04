@@ -11,7 +11,7 @@ tags:
 
 # Wiznote X Theme Test
 
-这份文档用于集中检查 Wiznote X 主题在 Obsidian 中的常规 Markdown 样式覆盖，包括标题、段落、列表、表格、代码块、引用、脚注、数学公式、图片和扩展块元素。
+This document is the canonical fixture for validating the Wiznote X Obsidian theme. It covers heading hierarchy, paragraph rhythm, list geometry, tables, code blocks, callouts, footnotes, math, images, and inline HTML.
 
 ## Heading Scale
 
@@ -29,8 +29,9 @@ tags:
 
 ## Paragraph And Inline Styles
 
-普通段落用于检查正文排版、行高、段距与阅读宽度。这里混合展示 **粗体**、*斜体*、***粗斜体***、~~删除线~~、<u>下划线</u>、==高亮==、`inline code` 和 [外部链接](https://example.com)。
-也可以测试混排文本，例如中文、English, numbers `12345`, email `hello@example.com`, and a short path `theme.css`。
+Paragraph text checks body font, line-height, spacing, and readable line width. It intentionally mixes **bold**, *italic*, ***bold italic***, ~~strikethrough~~, <u>underline</u>, ==highlight==, `inline code`, and an [external link](https://example.com).
+
+This line mixes Chinese and English for rhythm checks: 正文需要同时支持中文、English, numbers `12345`, email `hello@example.com`, and a short path `theme.css`.
 
 ## Lists
 
@@ -42,6 +43,7 @@ tags:
     - Third-level unordered item B.2.2
       - Fourth-level unordered item
 - Unordered item C
+- A long mixed-language list item used to verify wrap alignment in both reading mode and editing mode: 这个列表项故意写得很长，包含 English phrases, 中文描述, numbers 123456, and a `code span` so the second visual line exposes any indentation drift immediately.
 
 1. Ordered item 1
 2. Ordered item 2
@@ -52,51 +54,55 @@ tags:
          1. Fourth-level ordered item 1
          2. Fourth-level ordered item 2
 3. Ordered item 3
+4. Ordered item 4 with a long mixed-language wrap check: 这里同样故意写成长句，验证数字 marker、正文首行和换行后的第二行在编辑模式与阅读模式下是否从同一个文本起点开始。
 
 - [ ] Pending task item
 - [x] Completed task item
 - [ ] Follow-up task item
 
+### Heading Followed By Tasks
+
+- [ ] Heading-scoped pending task
+- [x] Heading-scoped completed task
+  - [ ] Nested heading-scoped follow-up
+
 - 无序列表项 A
 - 无序列表项 B
-  - 二级列表 B.1 (◦ circle)
+  - 二级列表 B.1
   - 二级列表 B.2
-    - 三级列表 B.2.1 (▪ square)
+    - 三级列表 B.2.1
     - 三级列表 B.2.2
-      - 四级列表 (● 循环回 disc)
+      - 四级列表
 - 无序列表项 C
 
-1. 有序列表项 1 (1.)
+1. 有序列表项 1
 2. 有序列表项 2
-   1. 二级有序 (a.)
-   2. 二级有序 (b.)
-      1. 三级有序 (i.)
-      2. 三级有序 (ii.)
-         1. 四级有序 (1. 循环)
-         2. 四级有序 (2. 循环)
+   1. 二级有序 a
+   2. 二级有序 b
+      1. 三级有序 i
+      2. 三级有序 ii
+         1. 四级有序 1
+         2. 四级有序 2
 3. 有序列表项 3
-
-- [ ] 待完成任务
-- [x] 已完成任务
-- [ ] 需要回归检查的任务
 
 ## Blockquotes
 
-> 这是一层引用块，用来检查引用边框、背景、阴影和正文颜色。
-> 引用内也可以包含 **强调文本**、`inline code` 和 [引用链接](https://example.com/quote)。
-> 嵌套引用示例：
-> > 第二层引用块用于测试内层背景和边距。
+> This is a blockquote used to verify border color, padding, paragraph color inheritance, and nested flow rhythm.
+>
+> It can also include **emphasis**, `inline code`, and [quote links](https://example.com/quote).
+>
+> > Nested quote level two keeps the same visual system.
 
 ## Alerts
 
 > [!NOTE]
-> 这是 Note 提示块，用于检查提示卡片样式。
+> This note callout validates neutral accent handling.
 
 > [!TIP]
-> 这是 Tip 提示块，用于检查卡片文字与边框颜色。
+> This tip callout validates content spacing and border treatment.
 
 > [!WARNING]
-> 这是 Warning 提示块，用于检查高亮语义块在当前主题下的视觉一致性。
+> This warning callout validates highlighted semantic treatment.
 
 ## Code Blocks
 
@@ -173,13 +179,32 @@ with two lines</code></pre>
       </td>
       <td><a href="https://example.com/table">Cell link</a></td>
     </tr>
+    <tr>
+      <td>
+        <ul>
+          <li>Nested cell bullet</li>
+          <li><code>inline cell code</code></li>
+        </ul>
+      </td>
+      <td>
+        <pre><code>nested cell code
+with Wiz-style rhythm</code></pre>
+      </td>
+      <td>
+        <p>Cell paragraph followed by a list.</p>
+        <ol>
+          <li>Cell ordered alpha</li>
+          <li>Cell ordered beta</li>
+        </ol>
+      </td>
+    </tr>
   </tbody>
 </table>
 
 | 列名 | 内容 | 备注 |
 |------|------|------|
 | 文本 | 普通正文 | 检查表格边框和行高 |
-| 代码 | `inline code` | 检查表格中的圆角胶囊 |
+| 代码 | `inline code` | 检查表格中的代码样式 |
 | 链接 | [Example](https://example.com) | 检查表格中的链接颜色 |
 
 ## Horizontal Rule
@@ -188,16 +213,16 @@ with two lines</code></pre>
 
 ## Footnotes
 
-脚注示例可以检查引用编号和脚注区域样式。这里有一个脚注[^theme-note]，这里还有第二个脚注[^second-note]。
+Here is one footnote reference[^theme-note], and here is another[^second-note].
 
-[^theme-note]: 这是第一个脚注内容。
-[^second-note]: 这是第二个脚注内容，用来检查多条脚注之间的间距。
+[^theme-note]: This is the first footnote body.
+[^second-note]: This is the second footnote body used to verify spacing between consecutive notes.
 
 ## Math
 
-行内公式示例：$E = mc^2$
+Inline math example: $E = mc^2$
 
-块级公式示例：
+Block math example:
 
 $$
 \int_{0}^{1} x^2 \, dx = \frac{1}{3}
@@ -218,10 +243,10 @@ flowchart LR
 
 ## HTML Inline Elements
 
-按键样式：<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
+Keyboard style: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
 
-上下标：H<sub>2</sub>O 与 x<sup>2</sup>
+Subscript and superscript: H<sub>2</sub>O and x<sup>2</sup>
 
 ## Closing Paragraph
 
-如果这份文档中的标题、正文、列表、引用、提示块、代码块、表格、图片、脚注、数学公式和 Mermaid 都显示正常，说明主题的常见 Markdown 样式覆盖已经比较完整。
+If headings, body text, lists, blockquotes, callouts, code blocks, tables, images, footnotes, math, and Mermaid all render with a consistent WizNote-like rhythm, the theme is close to parity.
