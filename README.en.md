@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="docs/logo.svg" alt="Wiznote X logo" width="620" />
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/App-Obsidian-448aff?style=flat-square" alt="App: Obsidian" />
   <img src="https://img.shields.io/badge/Version-0.1.0-07142a?style=flat-square" alt="Version: 0.1.0" />
   <img src="https://img.shields.io/badge/Style-Wiznote%20X-f5f8fb?style=flat-square" alt="Style: Wiznote X" />
@@ -21,18 +17,6 @@ It styles more than the editor surface. The theme also aligns Obsidian's file tr
 - compact heading rhythm and lightweight separators
 - low-shadow, low-noise application chrome
 - coordinated light and dark variants built from the same token set
-
-## Preview
-
-### Obsidian
-
-<p align="center">
-  <img src="docs/obsidian/light.png" alt="Obsidian light preview" width="900" />
-</p>
-
-<p align="center">
-  <img src="docs/obsidian/dark.png" alt="Obsidian dark preview" width="900" />
-</p>
 
 ## Supported App
 
@@ -73,16 +57,11 @@ Copy [`theme.css`](theme.css) and [`manifest.json`](manifest.json) into `<vault>
 wizx-theme/
 ├── .github/workflows/release.yml
 ├── docs/
-│   ├── logo.svg
-│   └── obsidian/
-│       ├── dark.png
-│       └── light.png
 ├── tests/
 ├── install.py
 ├── manifest.json
 ├── README.en.md
 ├── README.md
-├── screenshot.png
 ├── theme.css
 └── versions.json
 ```

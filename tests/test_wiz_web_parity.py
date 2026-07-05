@@ -173,11 +173,15 @@ class WizWebParityTest(unittest.TestCase):
         css = read_text(THEME_PATH)
         formatting_block = extract_rule_block(
             css,
-            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol,\n.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul",
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol,\n"
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul,\n"
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet",
         )
         pseudo_block = extract_rule_block(
             css,
-            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol::after,\n.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul::after",
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol::after,\n"
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul::after,\n"
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet::after",
         )
 
         for marker in [
@@ -185,19 +189,43 @@ class WizWebParityTest(unittest.TestCase):
             "counter-increment: wiz-ol-1",
             ".cm-formatting-list-ol::after",
             ".cm-formatting-list-ul::after",
+            ".list-bullet::after",
         ]:
             self.assertIn(marker, css)
 
         self.assertIn("color: transparent !important;", formatting_block)
         self.assertIn("display: inline-block;", formatting_block)
-        self.assertIn("font-size: 0;", formatting_block)
+        # Since Obsidian's caret is the native browser caret, it defaults to
+        # `color`. Hiding the marker text must not also hide the caret.
+        self.assertIn("caret-color: var(--text-normal);", formatting_block)
+        # Must stay non-zero so the caret doesn't collapse right after the marker.
+        self.assertIn("font-size: var(--font-text-size, 15px);", formatting_block)
+        self.assertNotIn("font-size: 0;", formatting_block)
         self.assertIn("color: var(--wiz-list-marker-color);", pseudo_block)
         self.assertIn("font-size: var(--font-text-size, 15px);", pseudo_block)
         self.assertIn("line-height: var(--wiz-list-line-height);", pseudo_block)
+        # Obsidian's native `.list-bullet` widget draws its dot as a small
+        # `background-color`/`box-shadow` box (not a text glyph). Left alone
+        # that box still renders underneath our own bullet character,
+        # producing a visible "double marker". Must be neutralized.
+        self.assertIn("background-color: transparent;", pseudo_block)
+        self.assertIn("box-shadow: none;", pseudo_block)
 
-        self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ul::after { content: "\\2022"; }', css)
-        self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ul::after { content: "\\25E6"; }', css)
-        self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ul::after { content: "\\25AA"; }', css)
+        self.assertIn(
+            '.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ul::after,\n'
+            '.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .list-bullet::after { content: "\\2022"; }',
+            css,
+        )
+        self.assertIn(
+            '.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ul::after,\n'
+            '.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .list-bullet::after { content: "\\25E6"; }',
+            css,
+        )
+        self.assertIn(
+            '.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ul::after,\n'
+            '.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .list-bullet::after { content: "\\25AA"; }',
+            css,
+        )
         self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ol::after { content: counter(wiz-ol-1, decimal) "."; }', css)
         self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ol::after { content: counter(wiz-ol-2, lower-alpha) "."; }', css)
         self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ol::after { content: counter(wiz-ol-3, lower-roman) "."; }', css)
@@ -317,6 +345,25 @@ class WizWebParityTest(unittest.TestCase):
         self.assertIn("overflow-x: auto;", block)
         self.assertIn("overflow-y: hidden;", block)
         self.assertIn("padding: 0 var(--wiz-table-wrapper-padding-right) 0 0;", block)
+
+    def test_scrollbar_rules_outrank_obsidians_native_scrollbar_guard(self) -> None:
+        css = read_text(THEME_PATH)
+
+        # Obsidian's own app.css scopes its default scrollbar rules as
+        # `body:not(.native-scrollbars) ::-webkit-scrollbar` (specificity
+        # 0,0,1,1). A bare `::-webkit-scrollbar` (0,0,0,1) always loses to
+        # that regardless of stylesheet order, silently falling back to the
+        # unstyled native scrollbar. Our rules must match the same scoping
+        # so they actually take effect in the left/middle pane and editor.
+        for selector in [
+            "body:not(.native-scrollbars) ::-webkit-scrollbar {",
+            "body:not(.native-scrollbars) ::-webkit-scrollbar-track {",
+            "body:not(.native-scrollbars) ::-webkit-scrollbar-thumb {",
+            "body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:hover {",
+        ]:
+            self.assertIn(selector, css)
+
+        self.assertNotIn("\n::-webkit-scrollbar {", css)
 
 
 if __name__ == "__main__":

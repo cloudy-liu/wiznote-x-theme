@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="docs/logo.svg" alt="Wiznote X logo" width="700" />
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/App-Obsidian-448aff?style=flat-square" alt="支持应用：Obsidian" />
   <img src="https://img.shields.io/badge/Version-0.1.0-07142a?style=flat-square" alt="版本：0.1.0" />
   <img src="https://img.shields.io/badge/Style-Wiznote%20X-f5f8fb?style=flat-square" alt="风格：Wiznote X" />
@@ -21,18 +17,6 @@ Wiznote X Theme 是一个为 Obsidian 构建的完整主题仓库，目标是把
 - 紧凑但不压迫的标题与段落节奏
 - 轻边框、低阴影、低装饰的界面壳层
 - 一套统一覆盖应用壳层和 Markdown 内容区的 light / dark 双模式
-
-## 预览
-
-### Obsidian
-
-<p align="center">
-  <img src="docs/obsidian/light.png" alt="Obsidian light preview" width="900" />
-</p>
-
-<p align="center">
-  <img src="docs/obsidian/dark.png" alt="Obsidian dark preview" width="900" />
-</p>
 
 ## 支持的应用
 
@@ -74,16 +58,11 @@ python install.py obsidian --vault "/path/to/your/vault"
 wizx-theme/
 ├── .github/workflows/release.yml
 ├── docs/
-│   ├── logo.svg
-│   └── obsidian/
-│       ├── dark.png
-│       └── light.png
 ├── tests/
 ├── install.py
 ├── manifest.json
 ├── README.en.md
 ├── README.md
-├── screenshot.png
 ├── theme.css
 └── versions.json
 ```

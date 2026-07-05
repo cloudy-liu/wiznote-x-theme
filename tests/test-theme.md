@@ -230,7 +230,7 @@ $$
 
 ## Image
 
-![Wiznote X Theme Preview](../docs/obsidian/light.png)
+![Wiznote X Theme Preview](../docs/wiz-demo.png)
 
 ## Mermaid
 

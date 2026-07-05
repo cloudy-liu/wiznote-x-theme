@@ -9,9 +9,8 @@ wizx-theme/
 ├── theme.css          # Single-file theme: tokens → Obsidian mapping → components
 ├── manifest.json      # Obsidian theme manifest (name, version, minAppVersion)
 ├── install.py         # Automated installer: symlinks theme into Obsidian vault
-├── docs/              # Visual references captured from live WizNote web app
+├── docs/              # Visual references captured from live WizNote web app (dev-only, not linked from README)
 ├── tests/             # Parity + install + discovery tests
-├── screenshot.png     # Theme preview for Obsidian community directory
 └── README.md          # User-facing documentation (zh/en)
 ```
 
