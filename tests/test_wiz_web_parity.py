@@ -173,15 +173,20 @@ class WizWebParityTest(unittest.TestCase):
         css = read_text(THEME_PATH)
         formatting_block = extract_rule_block(
             css,
-            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol,\n"
-            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul,\n"
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list {",
+        )
+        list_bullet_block = extract_rule_block(
+            css,
             ".markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet",
+        )
+        list_bullet_pseudo_block = extract_rule_block(
+            css,
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet::after",
         )
         pseudo_block = extract_rule_block(
             css,
             ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol::after,\n"
-            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul::after,\n"
-            ".markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet::after",
+            ".markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul::after",
         )
 
         for marker in [
@@ -189,11 +194,11 @@ class WizWebParityTest(unittest.TestCase):
             "counter-increment: wiz-ol-1",
             ".cm-formatting-list-ol::after",
             ".cm-formatting-list-ul::after",
-            ".list-bullet::after",
         ]:
             self.assertIn(marker, css)
 
         self.assertIn("color: transparent !important;", formatting_block)
+        self.assertIn("-webkit-text-fill-color: transparent;", formatting_block)
         self.assertIn("display: inline-block;", formatting_block)
         # Since Obsidian's caret is the native browser caret, it defaults to
         # `color`. Hiding the marker text must not also hide the caret.
@@ -202,30 +207,32 @@ class WizWebParityTest(unittest.TestCase):
         self.assertIn("font-size: var(--font-text-size, 15px);", formatting_block)
         self.assertNotIn("font-size: 0;", formatting_block)
         self.assertIn("color: var(--wiz-list-marker-color);", pseudo_block)
+        self.assertIn("-webkit-text-fill-color: var(--wiz-list-marker-color);", pseudo_block)
         self.assertIn("font-size: var(--font-text-size, 15px);", pseudo_block)
         self.assertIn("line-height: var(--wiz-list-line-height);", pseudo_block)
-        # Obsidian's native `.list-bullet` widget draws its dot as a small
-        # `background-color`/`box-shadow` box (not a text glyph). Left alone
-        # that box still renders underneath our own bullet character,
-        # producing a visible "double marker". Must be neutralized.
-        self.assertIn("background-color: transparent;", pseudo_block)
-        self.assertIn("box-shadow: none;", pseudo_block)
+        # Obsidian's native `.list-bullet` widget draws its dot through an
+        # `::after` box. Left alone that pseudo-element renders next to our
+        # own bullet character, producing a visible double marker. It must be
+        # disabled, but must not draw a second glyph of its own.
+        self.assertIn("color: transparent !important;", list_bullet_block)
+        self.assertIn("-webkit-text-fill-color: transparent;", list_bullet_block)
+        self.assertIn("background-color: transparent;", list_bullet_block)
+        self.assertIn("box-shadow: none;", list_bullet_block)
+        self.assertIn("background-color: transparent !important;", list_bullet_pseudo_block)
+        self.assertIn("border: 0;", list_bullet_pseudo_block)
+        self.assertIn("box-shadow: none !important;", list_bullet_pseudo_block)
+        self.assertIn("content: none;", list_bullet_pseudo_block)
+        self.assertIn("display: none;", list_bullet_pseudo_block)
+        self.assertIn("-webkit-text-fill-color: transparent;", list_bullet_pseudo_block)
+        self.assertNotIn(".cm-line.HyperMD-list-line .cm-formatting-list {", css)
+        self.assertNotIn(".cm-line.HyperMD-list-line .list-bullet", css)
+        self.assertNotIn('.list-bullet::after { content: "\\2022"; }', css)
+        self.assertNotIn('.list-bullet::after { content: "\\25E6"; }', css)
+        self.assertNotIn('.list-bullet::after { content: "\\25AA"; }', css)
 
-        self.assertIn(
-            '.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ul::after,\n'
-            '.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .list-bullet::after { content: "\\2022"; }',
-            css,
-        )
-        self.assertIn(
-            '.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ul::after,\n'
-            '.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .list-bullet::after { content: "\\25E6"; }',
-            css,
-        )
-        self.assertIn(
-            '.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ul::after,\n'
-            '.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .list-bullet::after { content: "\\25AA"; }',
-            css,
-        )
+        self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ul::after { content: "\\2022"; }', css)
+        self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ul::after { content: "\\25E6"; }', css)
+        self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ul::after { content: "\\25AA"; }', css)
         self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-1 .cm-formatting-list-ol::after { content: counter(wiz-ol-1, decimal) "."; }', css)
         self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-2 .cm-formatting-list-ol::after { content: counter(wiz-ol-2, lower-alpha) "."; }', css)
         self.assertIn('.markdown-source-view.mod-cm6 .HyperMD-list-line-3 .cm-formatting-list-ol::after { content: counter(wiz-ol-3, lower-roman) "."; }', css)

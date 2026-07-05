@@ -840,13 +840,31 @@ select:focus {
 .markdown-source-view.mod-cm6 .HyperMD-list-line-5 .cm-formatting-list-ol { counter-increment: wiz-ol-5; }
 .markdown-source-view.mod-cm6 .HyperMD-list-line-6 .cm-formatting-list-ol { counter-increment: wiz-ol-6; }
 
-.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol,
-.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul {
+.markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list {
+  caret-color: var(--text-normal);
   color: transparent !important;
+  -webkit-text-fill-color: transparent;
   display: inline-block;
-  font-size: 0;
+  font-size: var(--font-text-size, 15px);
   letter-spacing: normal;
+  position: relative;
   vertical-align: baseline;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet {
+  background-color: transparent;
+  box-shadow: none;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent;
+}
+
+.markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet::after {
+  background-color: transparent !important;
+  border: 0;
+  box-shadow: none !important;
+  content: none;
+  display: none;
+  -webkit-text-fill-color: transparent;
 }
 
 .markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol {
@@ -861,11 +879,17 @@ select:focus {
 
 .markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol::after,
 .markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ul::after {
+  background-color: transparent;
+  box-shadow: none;
   color: var(--wiz-list-marker-color);
+  -webkit-text-fill-color: var(--wiz-list-marker-color);
   display: inline-block;
   font-size: var(--font-text-size, 15px);
+  inset-inline-start: 0;
   letter-spacing: normal;
   line-height: var(--wiz-list-line-height);
+  position: absolute;
+  top: 0;
 }
 
 .markdown-source-view.mod-cm6 .HyperMD-list-line .cm-formatting-list-ol::after {
@@ -1269,11 +1293,6 @@ input[type="checkbox"]:checked {
 .cm-formatting-quote,
 .HyperMD-quote {
   color: var(--wiz-quote-color);
-}
-
-.cm-line.HyperMD-list-line .cm-formatting-list,
-.cm-line.HyperMD-list-line .list-bullet {
-  color: var(--wiz-list-marker-color);
 }
 
 .cm-line.HyperMD-task-line .task-list-item-checkbox {
