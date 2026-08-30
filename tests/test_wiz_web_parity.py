@@ -427,24 +427,35 @@ class WizWebParityTest(unittest.TestCase):
         self.assertIn("overflow-y: hidden;", block)
         self.assertIn("padding: 0 var(--wiz-table-wrapper-padding-right) 0 0;", block)
 
-    def test_scrollbar_rules_outrank_obsidians_native_scrollbar_guard(self) -> None:
+    def test_scrollbar_sizing_goes_through_obsidian_scrollbar_vars(self) -> None:
+        # Obsidian paints scrollbars from its own rules, scoped
+        # `body.styled-scrollbars ::-webkit-scrollbar` (0,1,2), and those rules
+        # read `--scrollbar-width` / `--scrollbar-height` / `--scrollbar-radius`.
+        # A bare `::-webkit-scrollbar` (0,0,1) loses to them, so the theme's 7px
+        # silently rendered as Obsidian's 12px default (app.css: `--scrollbar-
+        # width: 12px`). Feeding the vars needs no cascade fight, and stays
+        # correctly inert on macOS, where app.js adds the body class only when
+        # `rd.isMacOS` is false and Obsidian defers to native scrollbars.
+        #
+        # An earlier revision of this test expected a
+        # `body:not(.native-scrollbars)` scope. That class does not exist in
+        # Obsidian - 0 occurrences in app.css - so the selector would only have
+        # "worked" because `:not()` on a never-present class always matches.
         css = read_text(THEME_PATH)
 
-        # Obsidian's own app.css scopes its default scrollbar rules as
-        # `body:not(.native-scrollbars) ::-webkit-scrollbar` (specificity
-        # 0,0,1,1). A bare `::-webkit-scrollbar` (0,0,0,1) always loses to
-        # that regardless of stylesheet order, silently falling back to the
-        # unstyled native scrollbar. Our rules must match the same scoping
-        # so they actually take effect in the left/middle pane and editor.
-        for selector in [
-            "body:not(.native-scrollbars) ::-webkit-scrollbar {",
-            "body:not(.native-scrollbars) ::-webkit-scrollbar-track {",
-            "body:not(.native-scrollbars) ::-webkit-scrollbar-thumb {",
-            "body:not(.native-scrollbars) ::-webkit-scrollbar-thumb:hover {",
+        for declaration in [
+            "--scrollbar-width: 7px;",
+            "--scrollbar-height: 7px;",
+            "--scrollbar-radius: 7px;",
+            "--scrollbar-bg: transparent;",
+            "--scrollbar-thumb-bg: var(--wiz-scrollbar-thumb-bg);",
+            "--scrollbar-active-thumb-bg: var(--wiz-scrollbar-thumb-bg-active);",
         ]:
-            self.assertIn(selector, css)
+            self.assertIn(declaration, css)
 
-        self.assertNotIn("\n::-webkit-scrollbar {", css)
+        # No hand-rolled scrollbar selectors, and no phantom class.
+        self.assertNotIn("::-webkit-scrollbar {", css)
+        self.assertNotIn("native-scrollbars", css)
 
 
 if __name__ == "__main__":
