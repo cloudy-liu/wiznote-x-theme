@@ -8,7 +8,8 @@ Pixel-perfect replication of [WizNote](https://www.wiz.cn/xapp) markdown editor 
 wizx-theme/
 ├── theme.css          # Single-file theme: tokens → Obsidian mapping → components
 ├── manifest.json      # Obsidian theme manifest (name, version, minAppVersion)
-├── install.py         # Automated installer: symlinks theme into Obsidian vault
+├── install.py         # Installer: `python install.py obsidian` copies theme.css + manifest.json
+│                      #   into the vault (copy, not symlink — re-run after every edit)
 ├── docs/              # Visual references captured from live WizNote web app (dev-only, not linked from README)
 ├── tests/             # Parity + install + discovery tests
 └── README.md          # User-facing documentation (zh/en)

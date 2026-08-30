@@ -130,6 +130,13 @@ body {
   --tab-radius: 8px;
   --list-indent: 24px;
   --checkbox-radius: 4px;
+  /* Obsidian paints scrollbars itself from these vars, scoped
+     `body.styled-scrollbars ::-webkit-scrollbar` (0,1,2). Own selectors would
+     have to out-specify that; feeding its vars needs no cascade fight, and
+     correctly stays inert on macOS where Obsidian omits the body class. */
+  --scrollbar-width: 7px;
+  --scrollbar-height: 7px;
+  --scrollbar-radius: 7px;
   --bold-weight: bold;
   --wiz-img-brightness: 1;
   --h1-size: var(--wiz-heading-1-size);
@@ -1341,25 +1348,6 @@ input[type="checkbox"]:checked {
 .menu-item,
 .suggestion-item {
   transition: background-color 0.18s ease, color 0.18s ease;
-}
-
-::-webkit-scrollbar {
-  height: 7px;
-  width: 7px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb-bg);
-  border-radius: 7px;
-  box-shadow: none;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-active-thumb-bg);
 }
 
 @media (max-width: 1400px) {
