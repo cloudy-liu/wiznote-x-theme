@@ -130,7 +130,9 @@ class WizWebParityTest(unittest.TestCase):
         block = extract_rule_block(css, ".markdown-rendered li > ul,\n.markdown-rendered li > ol")
 
         self.assertIn("margin-bottom: 0;", block)
-        self.assertIn("margin-left: var(--wiz-list-level-step);", block)
+        # The raw step is compensated for the parent `li`'s padding; see
+        # test_preview_nesting_step_matches_wiz_flat_level_indent.
+        self.assertIn("margin-left: calc(var(--wiz-list-level-step)", block)
         self.assertIn("margin-top: 0;", block)
         self.assertIn("padding-left: 0;", block)
         self.assertIn("padding-right: 0;", block)
@@ -168,6 +170,78 @@ class WizWebParityTest(unittest.TestCase):
         self.assertIn('.markdown-rendered ol > li::before                                     { content: counter(wiz-r-ol, decimal) "."; }', css)
         self.assertIn('.markdown-rendered ol ol > li::before                                  { content: counter(wiz-r-ol, lower-alpha) "."; }', css)
         self.assertIn('.markdown-rendered ol ol ol > li::before                               { content: counter(wiz-r-ol, lower-roman) "."; }', css)
+
+    def test_preview_nesting_step_matches_wiz_flat_level_indent(self) -> None:
+        # Wiz indents list lines flat from the root: `.block-content.level2`
+        # gets `margin-left: 24px`, level3 48px, ... level8 168px - a constant
+        # 24px per level. The editor's CM6 lines are flat too, so they match for
+        # free; reading mode is nested DOM and compounds unless compensated.
+        css = read_text(THEME_PATH)
+        nested_block = extract_rule_block(
+            css, ".markdown-rendered li > ul,\n.markdown-rendered li > ol"
+        )
+        obsidian_block = extract_rule_block(
+            css,
+            ".markdown-rendered ul ul > li,\n"
+            ".markdown-rendered ul ol > li,\n"
+            ".markdown-rendered ol ul > li,\n"
+            ".markdown-rendered ol ol > li",
+        )
+        task_block = extract_rule_block(
+            css,
+            ".markdown-rendered li.task-list-item > ul,\n"
+            ".markdown-rendered li.task-list-item > ol",
+        )
+
+        # A child list starts at its parent `li`'s content edge, so the step has
+        # to subtract that padding back out to land on a flat 24px.
+        self.assertIn(
+            "margin-left: calc(var(--wiz-list-level-step) - var(--wiz-list-item-padding-left));",
+            nested_block,
+        )
+        self.assertIn(
+            "margin-left: calc(var(--wiz-list-level-step) - var(--wiz-task-indent));",
+            task_block,
+        )
+        # Obsidian's `.markdown-rendered ul ul > li { margin-inline-start }`
+        # outranks our own `li` rule, so it needs a same-shape selector to
+        # cancel - covering the mixed pairs Obsidian's rule itself misses.
+        self.assertIn("margin-inline-start: 0;", obsidian_block)
+        self.assertNotIn("--wiz-list-preview-nested-compensation", css)
+
+    def test_preview_suppresses_every_obsidian_marker_channel(self) -> None:
+        # The theme draws its own markers, so it owns suppressing *every*
+        # channel Obsidian paints one through. Scoping a suppression rule to
+        # the surface where a bug was observed - rather than to the mechanism -
+        # is what makes these regressions recur.
+        css = read_text(THEME_PATH)
+
+        # Channel 1: the native `::marker`. `list-style` must be declared on the
+        # `li` itself; Obsidian's `.markdown-rendered ul.has-list-bullet` sets
+        # `list-style-type` at a specificity we cannot outrank from the `ul`,
+        # and a declaration on the element beats an inherited one.
+        item_block = extract_rule_block(
+            css, ".markdown-rendered ol > li,\n.markdown-rendered ul > li"
+        )
+        self.assertIn("list-style: none;", item_block)
+
+        # Channel 2: the `.list-bullet` span widget, whose `::after` paints a
+        # round dot via `background-color`. Obsidian injects it in reading mode
+        # *and* live preview, so the selector must not be scoped to either.
+        bullet_block = extract_rule_block(css, ".markdown-rendered .list-bullet")
+        pseudo_block = extract_rule_block(css, ".markdown-rendered .list-bullet::after")
+
+        self.assertIn("color: transparent !important;", bullet_block)
+        self.assertIn("-webkit-text-fill-color: transparent;", bullet_block)
+        self.assertIn("background-color: transparent;", bullet_block)
+        self.assertIn("box-shadow: none;", bullet_block)
+        # `li.is-collapsed .list-bullet:after` outranks us, so the paint
+        # properties have to stay `!important`.
+        self.assertIn("background-color: transparent !important;", pseudo_block)
+        self.assertIn("box-shadow: none !important;", pseudo_block)
+        self.assertIn("border: 0;", pseudo_block)
+        self.assertIn("content: none;", pseudo_block)
+        self.assertIn("display: none;", pseudo_block)
 
     def test_editor_self_drawn_markers_restore_wiz_geometry(self) -> None:
         css = read_text(THEME_PATH)
