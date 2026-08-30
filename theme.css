@@ -53,7 +53,6 @@ body {
   --wiz-list-ul-marker-width: 22px;
   --wiz-list-level-step: 24px;
   --wiz-list-line-height: 24px;
-  --wiz-list-preview-nested-compensation: -6px;
   --wiz-task-indent: 29.5px;
   --wiz-task-box-size: 12px;
   --wiz-list-ol-marker-font: "Helvetica Neue", Consolas, var(--wiz-editor-mono-font);
@@ -736,22 +735,52 @@ select:focus {
   padding-right: var(--wiz-list-padding-right);
 }
 
+/* `list-style` has to be declared on the `li` that paints the marker, not just
+   on the list that configures it: Obsidian's `ul.has-list-bullet` sets
+   `list-style-type` at a higher specificity than we can reach from the `ul`,
+   and a declaration on the element always beats an inherited one. */
 .markdown-rendered ol > li,
 .markdown-rendered ul > li {
   counter-increment: wiz-r-ol;
+  list-style: none;
   margin: 0;
   min-height: var(--wiz-list-line-height);
   padding-left: var(--wiz-list-item-padding-left);
   position: relative;
 }
 
+/* Wiz indents each list line by a flat `24px * (level - 1)` from the root
+   (`.block-content.level2 { margin-left: 24px }` ... `level8 { 168px }`), and
+   the editor's flat CM6 lines reproduce that for free. Reading mode is nested
+   DOM, so a child list already starts at its parent `li`'s content edge - one
+   `--wiz-list-item-padding-left` in. The step has to subtract that back out, or
+   every level compounds. */
 .markdown-rendered li > ul,
 .markdown-rendered li > ol {
   margin-bottom: 0;
-  margin-left: var(--wiz-list-level-step);
+  margin-left: calc(var(--wiz-list-level-step) - var(--wiz-list-item-padding-left));
   margin-top: 0;
   padding-left: 0;
   padding-right: 0;
+}
+
+/* Obsidian adds a second, independent indent on nested items
+   (`app.css`: `.markdown-rendered ul ul > li { margin-inline-start: var(--list-indent) }`).
+   That selector outranks our own `li` rule, so zeroing it needs a selector of
+   the same shape - and it has to cover the mixed `ul`/`ol` pairs Obsidian's
+   own rule misses, or mixed nesting indents differently from pure nesting. */
+.markdown-rendered ul ul > li,
+.markdown-rendered ul ol > li,
+.markdown-rendered ol ul > li,
+.markdown-rendered ol ol > li {
+  margin-inline-start: 0;
+}
+
+/* A nested list under a task item starts one `--wiz-task-indent` in, not one
+   `--wiz-list-item-padding-left`, so it needs its own compensation. */
+.markdown-rendered li.task-list-item > ul,
+.markdown-rendered li.task-list-item > ol {
+  margin-left: calc(var(--wiz-list-level-step) - var(--wiz-task-indent));
 }
 
 .markdown-rendered ol > li::before {
@@ -851,6 +880,10 @@ select:focus {
   vertical-align: baseline;
 }
 
+/* Obsidian injects its own `.list-bullet` widget in *both* reading mode and
+   live preview. Both have to be neutralised, or its dot renders alongside the
+   marker we draw ourselves. */
+.markdown-rendered .list-bullet,
 .markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet {
   background-color: transparent;
   box-shadow: none;
@@ -858,6 +891,7 @@ select:focus {
   -webkit-text-fill-color: transparent;
 }
 
+.markdown-rendered .list-bullet::after,
 .markdown-source-view.mod-cm6 .HyperMD-list-line .list-bullet::after {
   background-color: transparent !important;
   border: 0;
