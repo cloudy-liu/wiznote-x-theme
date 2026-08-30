@@ -2,3 +2,7 @@
 __pycache__/
 *.pyc
 dist/
+
+# Verbatim CSS extracted from the WizNote desktop app. Regenerate locally per
+# docs/reference/EXTRACTION.md; never commit a commercial product's source.
+docs/reference/wiznote-*.css

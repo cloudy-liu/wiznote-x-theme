@@ -2,7 +2,7 @@
 
 > 本文档记录 2026-07-04 这一轮「从 WizNote 桌面版 Electron 壳里挖官方样式源码」的完整过程：怎么找到的、走过哪些死胡同、验证时踩过哪些坑、最终改了什么。目的是给后续想重复这类"逆向提取 + 二次验证"工作的人（包括未来的自己）省时间。
 >
-> 关联产物：`docs/reference/EXTRACTION.md`（蒸馏结论）、`wiznote-editor-vars.css` / `wiznote-editor-main.css` / `wiznote-shell.css`（原始提取物）。
+> 关联产物：`docs/reference/EXTRACTION.md`（蒸馏结论）。原始提取物 `wiznote-editor-vars.css` / `wiznote-editor-main.css` / `wiznote-shell.css` **不入库**（商业产品的逐字源码），下文提到它们时指的是按 EXTRACTION.md 里的偏移量在本地重新生成的副本。
 > 关联改动：`theme.css`（本轮按结论修改的目标文件）、`CLAUDE.md`（更新了过时的暗色数值表）、`tests/test_wiz_web_parity.py`（同步了一处断言）。
 
 ## 0. 背景与动机

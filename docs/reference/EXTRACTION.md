@@ -3,7 +3,11 @@
 Source: installed desktop app `C:\Program Files\WizNote` (Electron, build 2024-07-25).
 Extraction: `app.asar` → `dist/renderer/renderer.dev.js` (CSS-in-JS chunks) + `renderer.dev.css`.
 
-Files in this directory:
+> The raw extracted stylesheets are **not committed** — they are verbatim source from a commercial
+> product. This file records the values distilled from them; regenerate the originals locally from
+> your own WizNote install using the offsets below if you need to re-verify.
+
+Files this document was distilled from (regenerate locally, do not commit):
 
 | File | Origin | Content |
 |------|--------|---------|

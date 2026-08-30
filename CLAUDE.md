@@ -18,8 +18,9 @@ wizx-theme/
 
 All CSS variables are **extracted from the live WizNote web app** (`wiz.cn/xapp`) via Chrome DevTools.
 The WizNote desktop app (Electron, `renderer.dev.js`/`.css`) is used as a second, code-level source
-of truth for values the web app can't reveal precisely — see `docs/reference/EXTRACTION.md` and the
-extracted `docs/reference/wiznote-*.css` files. Where the two sources conflict, the desktop app's
+of truth for values the web app can't reveal precisely — see `docs/reference/EXTRACTION.md`, which
+records the extracted values. The raw extracted CSS is deliberately not committed. Where the two
+sources conflict, the desktop app's
 literal CSS/JS wins (it's the actual rendering code, not a visual approximation).
 
 ### Token Architecture (theme.css)
